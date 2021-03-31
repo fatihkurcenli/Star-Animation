@@ -12,7 +12,7 @@ class StarBackGround extends StatefulWidget {
 class _StarBackGroundState extends State<StarBackGround>
     with SingleTickerProviderStateMixin {
   Animation _animation;
-  Animation fadeAnimStar1, fadeAnimStar2, fadeAnimStar3, fadeAnimStar4;
+  Animation animatedStar1,animatedStar2,animatedStar3,animatedStar4;
   AnimationController _animationController;
   List<WhereStar> listStar = [];
 
@@ -37,24 +37,24 @@ class _StarBackGroundState extends State<StarBackGround>
         }
       });
 
-    fadeAnimStar1 = Tween(begin: 0.0, end: 1.0).animate(CurvedAnimation(
-        parent: _animationController, curve: Interval(0.0, 0.5)));
-    fadeAnimStar1.addListener(() {
+    animatedStar1 = Tween(begin: 0.0, end: 1.0).animate(CurvedAnimation(
+        parent: _animationController, curve: Interval(0.0, 0.25)));
+    animatedStar1.addListener(() {
       setState(() {});
     });
-    fadeAnimStar2 = Tween(begin: 0.0, end: 1.0).animate(CurvedAnimation(
-        parent: _animationController, curve: Interval(0.5, 1.0)));
-    fadeAnimStar2.addListener(() {
+    animatedStar2 = Tween(begin: 0.0, end: 1.0).animate(CurvedAnimation(
+        parent: _animationController, curve: Interval(0.25, 0.5)));
+    animatedStar2.addListener(() {
       setState(() {});
     });
-    fadeAnimStar3 = Tween(begin: 1.0, end: 0.0).animate(CurvedAnimation(
-        parent: _animationController, curve: Interval(0.0, 0.5)));
-    fadeAnimStar3.addListener(() {
+    animatedStar3 = Tween(begin: 1.0, end: 0.0).animate(CurvedAnimation(
+        parent: _animationController, curve: Interval(0.75, 0.80)));
+    animatedStar3.addListener(() {
       setState(() {});
     });
-    fadeAnimStar4 = Tween(begin: 1.0, end: 0.0).animate(CurvedAnimation(
-        parent: _animationController, curve: Interval(0.5, 1.0)));
-    fadeAnimStar4.addListener(() {
+    animatedStar4 = Tween(begin: 1.0, end: 0.0).animate(CurvedAnimation(
+        parent: _animationController, curve: Interval(0.8, 1.0)));
+    animatedStar4.addListener(() {
       setState(() {});
     });
 
@@ -63,8 +63,8 @@ class _StarBackGroundState extends State<StarBackGround>
           left: Random().nextDouble() * 500,
           bottom: Random().nextDouble() * 500,
           top: Random().nextDouble() * 500,
-          extraSize: Random().nextDouble() * 2,
-          angle: Random().nextDouble() * 360,
+          extraSize: Random().nextDouble() * 4,
+          angle: Random().nextDouble(),
           typeFade: Random().nextInt(4)));
     }
     _animationController.forward();
@@ -79,9 +79,16 @@ class _StarBackGroundState extends State<StarBackGround>
 
   @override
   Widget build(BuildContext context) {
-    final double width = MediaQuery.of(context).size.width;
-    final double height = MediaQuery.of(context).size.height;
-    return Scaffold(body: Stack(children: buildGroupStar()));
+    return Scaffold(
+        body: Stack(
+      children: [
+        Container(
+          width: double.infinity,
+          height: double.infinity,
+          child: buildGroupStar(),
+        )
+      ],
+    ));
   }
 
   Widget buildStar(double left, double top, double extraSize, double angle,
@@ -98,19 +105,17 @@ class _StarBackGroundState extends State<StarBackGround>
                 size: _animation.value * 1.5 + extraSize,
               ),
               opacity: (typeFade == 1)
-                  ? fadeAnimStar1.value
+                  ? animatedStar1.value
                   : (typeFade == 2)
-                      ? fadeAnimStar2.value
+                      ? animatedStar2.value
                       : (typeFade == 3)
-                          ? fadeAnimStar3.value
-                          : fadeAnimStar4.value,
+                          ? animatedStar3.value
+                          : animatedStar4.value,
             ),
           ),
           angle: angle,
         ),
         alignment: FractionalOffset.center,
-        width: 100.0,
-        height: 100.0,
       ),
       bottom: bottom,
       left: left,
@@ -118,18 +123,19 @@ class _StarBackGroundState extends State<StarBackGround>
     );
   }
 
-  List<Widget> buildGroupStar() {
+  Widget buildGroupStar() {
     List<Widget> list = [];
     for (int i = 0; i < 100; i++) {
       list.add(buildStar(
-          listStar[i].left,
-          listStar[i].top,
-          listStar[i].extraSize,
-          listStar[i].angle,
-          listStar[i].bottom,
-          listStar[i].typeFade));
+        listStar[i].left,
+        listStar[i].top,
+        listStar[i].extraSize,
+        listStar[i].angle,
+        listStar[i].bottom,
+        listStar[i].typeFade,
+      ));
     }
-    return list;
+    return Stack(children: list);
   }
 }
 
